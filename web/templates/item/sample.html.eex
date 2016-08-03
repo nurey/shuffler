@@ -1,0 +1,1 @@
+<h2>You should go to <%= @item.name %></h2>
