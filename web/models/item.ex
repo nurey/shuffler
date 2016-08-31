@@ -3,6 +3,8 @@ defmodule HelloPhoenix.Item do
 
   schema "items" do
     field :name, :string
+    field :photo, :binary
+    field :photo_type, :string
 
     timestamps()
   end
@@ -12,7 +14,7 @@ defmodule HelloPhoenix.Item do
   """
   def changeset(struct, params \\ %{}) do
     struct
-    |> cast(params, [:name])
+    |> cast(params, [:name, :photo, :photo_type])
     |> validate_required([:name])
   end
 end

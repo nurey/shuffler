@@ -7,6 +7,7 @@
     <%= @item.name %>
   </li>
 
+  <img src="data:<%= @item.photo_type %>;base64,<%= :base64.encode(@item.photo) %>">
 </ul>
 
 <%= link "Edit", to: item_path(@conn, :edit, @item) %>
