@@ -54,17 +54,27 @@ defmodule Mix.Tasks.AddPhotoToItems do
 
   def lookup_google_place(item) do
     params = @params ++ [{"name", item.name}]
-    # Mix.shell.info(inspect params)
-    GooglePlace.get!("/nearbysearch/json", [], params: params).body
+    Mix.shell.info(inspect params)
+    photos = GooglePlace.get!("/nearbysearch/json", [], params: params).body
       |> Poison.decode!
       |> Map.take(["results"])
       |> Enum.map(fn({k, v}) -> {String.to_atom(k), v} end)
       |> Keyword.get(:results)
       |> List.first
       |> Map.get("photos")
-      |> List.first
-      |> Map.take(["photo_reference", "height"])
-      |> Enum.map(fn({k, v}) -> {String.to_atom(k), v} end)
+
+    if photos do
+      photos
+        |> List.first
+        |> Map.take(["photo_reference", "height"])
+        |> Enum.map(fn({k, v}) -> {String.to_atom(k), v} end)
+    else
+      [height: nil, photo_reference: nil]
+    end
+  end
+
+  def lookup_photo([height: height, photo_reference: photo_reference]) when height == nil or photo_reference == nil do
+    nil
   end
 
   def lookup_photo([height: height, photo_reference: photo_reference]) do
@@ -87,6 +97,10 @@ defmodule Mix.Tasks.AddPhotoToItems do
     end
   end
 
+  def download_photo(url) when url == nil do
+    {nil, nil}
+  end
+
   def download_photo(url) do
     # HTTPoison has trouble with certain https urls.
     # See https://github.com/edgurgel/httpoison/issues/160
@@ -99,10 +113,10 @@ defmodule Mix.Tasks.AddPhotoToItems do
           |> elem(1)
         {body, content_type}
       {:ok, %HTTPoison.Response{status_code: 404}} ->
-        nil
+        {nil, nil}
       {:error, %HTTPoison.Error{reason: reason}} ->
         Mix.shell.info(reason)
-        nil
+        {nil, nil}
     end
   end
 end
