@@ -1,1 +1,5 @@
 <h2>You should go to <%= @item.name %></h2>
+
+<%= if @item.photo do %>
+  <img src="data:<%= @item.photo_type %>;base64,<%= :base64.encode(@item.photo) %>" width="61.8%">
+<% end %>
