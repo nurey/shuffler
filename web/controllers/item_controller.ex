@@ -9,8 +9,23 @@ defmodule HelloPhoenix.ItemController do
   end
 
   def sample(conn, _params) do
-    items = Repo.all(Item)
-    item = Enum.random(items)
+    count = Repo.one(from i in Item, select: count("*"))
+
+    random_id = Enum.random(1..count-1)
+
+    item = Repo.one(
+      from i in Item,
+        select: %{
+          id: i.id,
+          name: i.name,
+          photo: fragment("encode(photo, 'base64') as photo"),
+          photo_type: i.photo_type,
+          inserted_at: i.inserted_at,
+          updated_at: i.updated_at
+        },
+        offset: ^random_id,
+        limit: 1
+    )
     render(conn, "sample.html", item: item)
   end
 
