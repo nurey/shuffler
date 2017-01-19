@@ -3,3 +3,7 @@
 <%= if @item.photo do %>
   <img src="data:<%= @item.photo_type %>;base64,<%= @item.photo %>" width="61.8%">
 <% end %>
+
+<footer>
+  <%= link "Add more or see all", to: item_path(@conn, :index) %>
+</footer>

@@ -1,1 +1,8 @@
 /* This file is for your main application css. */
+
+footer {
+  padding-top: 50px;
+  padding-bottom: 40px;
+  font-size: 0.7em;
+  text-align: right;
+}
